@@ -16,3 +16,17 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(array('prefix' => 'v1'), function()
+{
+    Route::post('login', 'Auth\LoginController@logoutApps');
+    Route::post('logout', 'Auth\LoginController@logoutApps');
+    Route::post('forgot-password', 'Auth\LoginController@logoutApps');
+    Route::post('login-social', 'Auth\LoginController@logoutApps');
+    Route::post('refresh-token', 'Auth\LoginController@logoutApps');
+    Route::post('resend-activation-mail', 'Auth\LoginController@logoutApps');
+
+  	Route::group(['middleware' => 'apichecktoken'], function () {
+  	    // Route::resource('passenger','PassengerController');
+  	});
+});
