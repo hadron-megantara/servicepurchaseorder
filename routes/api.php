@@ -19,8 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(array('prefix' => 'v1'), function()
 {
-    Route::post('login', 'Auth\LoginController@logoutApps');
-    Route::post('logout', 'Auth\LoginController@logoutApps');
+    Route::post('register', 'Auth\RegisterController@create');
+    Route::post('login', 'Auth\LoginController@login');
+    Route::post('logout', 'Auth\LoginController@logout');
     Route::post('forgot-password', 'Auth\LoginController@logoutApps');
     Route::post('login-social', 'Auth\LoginController@logoutApps');
     Route::post('refresh-token', 'Auth\LoginController@logoutApps');
@@ -29,4 +30,8 @@ Route::group(array('prefix' => 'v1'), function()
   	Route::group(['middleware' => 'apichecktoken'], function () {
   	    // Route::resource('passenger','PassengerController');
   	});
+
+    Route::get('product/list', 'ProductController@getList');
+    Route::get('product/detail', 'ProductController@getDetail');
+    Route::get('product/detail/photo', 'ProductController@getDetailPhoto');
 });
