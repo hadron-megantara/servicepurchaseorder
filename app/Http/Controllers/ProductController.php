@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Category;
+use App\Color;
+use App\Gender;
+use App\Size;
+use App\Stock;
 
 class ProductController extends Controller
 {
@@ -65,5 +70,13 @@ class ProductController extends Controller
         $productPhotoData = DB::select('call GET_PRODUCT_DETAIL_PHOTO(?, ?)',[$request->owner, $request->productId]);
 
         return response()->json(['status' => 'success', 'message' => 'Pengambilan Detail Produk Berhasil', 'data' => ['detail' => $productPhotoData], 'error' => null]);
+    }
+
+    public function getDetailStock(Request $request){
+        if($request->has('productId') && $request->has('owner')){
+            $productStock = DB::select('call GET_PRODUCT_DETAIL_STOCK(?, ?)',[$request->owner, $request->productId]);
+
+            return response()->json(['isError' => false, 'isMessage' => '', 'isResponse' => ['data' => $productStock]]);
+        }
     }
 }
