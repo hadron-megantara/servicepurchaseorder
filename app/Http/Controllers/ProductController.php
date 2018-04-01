@@ -9,6 +9,7 @@ use App\Color;
 use App\Gender;
 use App\Size;
 use App\Stock;
+use App\Gallery;
 
 class ProductController extends Controller
 {
@@ -86,5 +87,11 @@ class ProductController extends Controller
 
             return response()->json(['isError' => false, 'isMessage' => '', 'isResponse' => ['data' => $productList]]);
         }
+    }
+
+    public function getPhotoByProducColor(Request $request){
+        $photo = DB::select('call GET_PRODUCT_DETAIL_PHOTO_COLOR(?, ?, ?)',[$request->owner, $request->productId, $request->color]);
+
+        return response()->json(['isError' => false, 'isMessage' => '', 'isResponse' => ['data' => $photo]]);
     }
 }
