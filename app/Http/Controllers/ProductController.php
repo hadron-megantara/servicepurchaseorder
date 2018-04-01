@@ -79,4 +79,12 @@ class ProductController extends Controller
             return response()->json(['isError' => false, 'isMessage' => '', 'isResponse' => ['data' => $productStock]]);
         }
     }
+
+    public function getDetailList(Request $request){
+        if($request->has('productIdList') && $request->has('owner')){
+            $productList = DB::select('call GET_PRODUCT_DETAIL_List(?, ?)',[$request->owner, $request->productIdList]);
+
+            return response()->json(['isError' => false, 'isMessage' => '', 'isResponse' => ['data' => $productList]]);
+        }
+    }
 }

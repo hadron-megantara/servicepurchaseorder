@@ -35,6 +35,7 @@ Route::group(array('prefix' => 'v1'), function()
     Route::get('product/detail', 'ProductController@getDetail');
     Route::get('product/detail/photo', 'ProductController@getDetailPhoto');
     Route::get('product/detail/stock', 'ProductController@getDetailStock');
+    Route::get('product/detail/list', 'ProductController@getDetailList');
 
     Route::get('config/category/get', 'ConfigController@getCategory');
     Route::get('config/color/get', 'ConfigController@getColor');
