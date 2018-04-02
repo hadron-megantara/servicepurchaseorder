@@ -31,6 +31,7 @@ Route::group(array('prefix' => 'v1'), function()
   	    // Route::resource('passenger','PassengerController');
   	});
 
+    Route::get('product/list/event/new', 'ProductController@getListEventNew');
     Route::get('product/list', 'ProductController@getList');
     Route::get('product/detail', 'ProductController@getDetail');
     Route::get('product/detail/photo', 'ProductController@getDetailPhoto');
