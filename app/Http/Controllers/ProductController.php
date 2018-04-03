@@ -65,7 +65,7 @@ class ProductController extends Controller
 
         $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $description, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
 
-        return response()->json(['status' => 'success', 'message' => 'Pengambilan List Produk Berhasil', 'data' => ['product' => $productListData, 'total' => count($productListData)], 'error' => null]);
+        return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
     }
 
     public function getListEventNew(Request $request){
@@ -118,26 +118,26 @@ class ProductController extends Controller
 
         $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $description, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
 
-        return response()->json(['status' => 'success', 'message' => 'Pengambilan List Produk Berhasil', 'data' => ['product' => $productListData, 'total' => count($productListData)], 'error' => null]);
+        return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
     }
 
     public function getDetail(Request $request){
         $productDetailData = DB::select('call GET_PRODUCT_DETAIL(?, ?)',[$request->owner, $request->productId]);
 
-        return response()->json(['status' => 'success', 'message' => 'Pengambilan Detail Produk Berhasil', 'data' => ['detail' => $productDetailData], 'error' => null]);
+        return response()->json(['isError' => false, 'isMessage' => 'Pengambilan Detail Produk Berhasil', 'isResponse' => ['data' => ['detail' => $productDetailData]]]);
     }
 
     public function getDetailPhoto(Request $request){
         $productPhotoData = DB::select('call GET_PRODUCT_DETAIL_PHOTO(?, ?)',[$request->owner, $request->productId]);
 
-        return response()->json(['status' => 'success', 'message' => 'Pengambilan Detail Produk Berhasil', 'data' => ['detail' => $productPhotoData], 'error' => null]);
+        return response()->json(['isError' => false, 'isMessage' => 'Pengambilan Detail Produk Berhasil', 'isResponse' => ['data' => ['detail' => $productPhotoData]]]);
     }
 
     public function getDetailStock(Request $request){
         if($request->has('productId') && $request->has('owner')){
             $productStock = DB::select('call GET_PRODUCT_DETAIL_STOCK(?, ?)',[$request->owner, $request->productId]);
 
-            return response()->json(['isError' => false, 'isMessage' => '', 'isResponse' => ['data' => $productStock]]);
+            return response()->json(['isError' => false, 'isMessage' => 'Pengambilan Detail Produk Berhasil', 'isResponse' => ['data' => $productStock]]);
         }
     }
 
