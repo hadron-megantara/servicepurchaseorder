@@ -45,9 +45,9 @@ class RegisterController extends Controller
                 'CreatedDt' => Carbon::now()->toDateTimeString(),
             ]);
 
-            return response()->json(['status' => 'success', 'data' => ['message' => 'Register berhasil', 'user' => ['id' =>  $user->id, 'email' => $user->Email, 'name' => $user->Fullname, 'owner' => $user->_Owner, 'role' => $user->_Role, 'phone' => $user->phone ]], 'error' => null]);
+            return response()->json(['isError' => false, 'message' => 'Registerasi Akun Berhasil', 'isResponse' => ['data' => ['id' =>  $user->id, 'email' => $user->Email, 'name' => $user->Fullname, 'owner' => $user->_Owner, 'role' => $user->_Role, 'phone' => $user->phone ]]]);
         } catch (UnsatisfiedDependencyException $e) {
-            return response()->json(['status' => 'error', 'data' => null, 'error' => ['code' => 500, 'message' => $e->getMessage()]]);
+            return response()->json(['isError' => true, 'message' => 'Terjadi Kesalahan Sistem', 'isResponse' => null]);
         }
     }
 }

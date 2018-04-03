@@ -7,6 +7,9 @@ use App\Category;
 use App\Color;
 use App\Gender;
 use App\Size;
+use App\Province;
+use App\City;
+use App\District;
 
 class ConfigController extends Controller
 {
@@ -32,5 +35,31 @@ class ConfigController extends Controller
         $size = Size::all();
 
         return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $size]]);
+    }
+
+    public function getProvince(Request $request){
+        $province = Province::all();
+
+        return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $province]]);
+    }
+
+    public function getCity(Request $request){
+        if($request->has('provinceId')){
+            $city = City::where('_Province', $request->provinceId)->get();
+        } else{
+            $city = City::all();
+        }
+
+        return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $city]]);
+    }
+
+    public function getDistrict(Request $request){
+        if($request->has('cityId')){
+            $district = District::where('_City', $request->cityId)->get();
+        } else{
+            $district = District::all();
+        }
+
+        return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $district]]);
     }
 }

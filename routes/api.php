@@ -39,8 +39,13 @@ Route::group(array('prefix' => 'v1'), function()
     Route::get('product/detail/list', 'ProductController@getDetailList');
     Route::get('product/detail/photo-by-color', 'ProductController@getPhotoByProducColor');
 
+    Route::post('order/add', 'OrderController@create');
+
     Route::get('config/category/get', 'ConfigController@getCategory');
     Route::get('config/color/get', 'ConfigController@getColor');
     Route::get('config/gender/get', 'ConfigController@getGender');
     Route::get('config/size/get', 'ConfigController@getSize');
+    Route::get('config/province/get', 'ConfigController@getProvince');
+    Route::get('config/city/get', 'ConfigController@getCity');
+    Route::get('config/district/get', 'ConfigController@getDistrict');
 });
