@@ -65,6 +65,10 @@ class ProductController extends Controller
 
         $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $description, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
 
+        for($i=0;$i < count($productListData);$i++){
+            $productListData[$i]->Photo = 'app/images/'.$productListData[$i]->Photo;
+        }
+
         return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
     }
 
@@ -117,6 +121,9 @@ class ProductController extends Controller
         }
 
         $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $description, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
+        for($i=0;$i < count($productListData);$i++){
+            $productListData[$i]->Photo = 'app/images/'.$productListData[$i]->Photo;
+        }
 
         return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
     }
