@@ -26,11 +26,6 @@ class ProductController extends Controller
             $name = $request->name;
         }
 
-        $description = '';
-        if($request->has('description') && $request->description != ''){
-            $description = $request->description;
-        }
-
         $category = 0;
         if($request->has('category') && $request->category != ''){
             $category = $request->category;
@@ -63,10 +58,10 @@ class ProductController extends Controller
             $orderBy = $request->orderBy;
         }
 
-        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $description, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
+        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
 
         for($i=0;$i < count($productListData);$i++){
-            $productListData[$i]->Photo = 'app/images/'.$productListData[$i]->Photo;
+            $productListData[$i]->Photo = url('/').'/app/images/'.$productListData[$i]->Photo;
         }
 
         return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
@@ -81,11 +76,6 @@ class ProductController extends Controller
         $name = '';
         if($request->has('name')  && $request->name != ''){
             $name = $request->name;
-        }
-
-        $description = '';
-        if($request->has('description') && $request->description != ''){
-            $description = $request->description;
         }
 
         $category = 0;
@@ -120,9 +110,9 @@ class ProductController extends Controller
             $orderBy = $request->orderBy;
         }
 
-        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $description, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
+        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
         for($i=0;$i < count($productListData);$i++){
-            $productListData[$i]->Photo = 'app/images/'.$productListData[$i]->Photo;
+            $productListData[$i]->Photo = url('/').'/app/images/'.$productListData[$i]->Photo;
         }
 
         return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
@@ -136,6 +126,10 @@ class ProductController extends Controller
 
     public function getDetailPhoto(Request $request){
         $productPhotoData = DB::select('call GET_PRODUCT_DETAIL_PHOTO(?, ?)',[$request->owner, $request->productId]);
+
+        for($i=0;$i < count($productPhotoData);$i++){
+            $productPhotoData[$i]->Photo = url('/').'/app/images/'.$productPhotoData[$i]->Photo;
+        }
 
         return response()->json(['isError' => false, 'isMessage' => 'Pengambilan Detail Produk Berhasil', 'isResponse' => ['data' => ['detail' => $productPhotoData]]]);
     }
