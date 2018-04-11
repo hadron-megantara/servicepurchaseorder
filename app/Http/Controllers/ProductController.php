@@ -36,6 +36,11 @@ class ProductController extends Controller
             $gender = $request->gender;
         }
 
+        $color = 0;
+        if($request->has('color') && $request->color != ""){
+            $color = $request->color;
+        }
+
         $priceBot = 0;
         $priceTop = 0;
         if($request->has('priceBot') && $request->priceBot != '' && $request->has('priceTop') && $request->priceTop != ''){
@@ -58,7 +63,7 @@ class ProductController extends Controller
             $orderBy = $request->orderBy;
         }
 
-        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
+        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy, $color]);
 
         for($i=0;$i < count($productListData);$i++){
             $productListData[$i]->Photo = url('/').'/app/images/'.$productListData[$i]->Photo;
@@ -88,6 +93,11 @@ class ProductController extends Controller
             $gender = $request->gender;
         }
 
+        $color = 0;
+        if($request->has('color')){
+            $color = $request->color;
+        }
+
         $priceBot = 0;
         $priceTop = 0;
         if($request->has('priceBot') && $request->priceBot != '' && $request->has('priceTop') && $request->priceTop != ''){
@@ -110,7 +120,7 @@ class ProductController extends Controller
             $orderBy = $request->orderBy;
         }
 
-        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
+        $productListData = DB::select('call GET_PRODUCT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy, $color]);
         for($i=0;$i < count($productListData);$i++){
             $productListData[$i]->Photo = url('/').'/app/images/'.$productListData[$i]->Photo;
         }
