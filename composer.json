@@ -11,7 +11,7 @@
         "laravel/tinker": "^1.0",
         "laravolt/indonesia": "^0.7.0",
         "ramsey/uuid": "^3.7",
-        "tymon/jwt-auth": "dev-develop"
+        "tymon/jwt-auth": "1.0.0-rc.2"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
