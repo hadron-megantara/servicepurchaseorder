@@ -31,6 +31,8 @@ Route::group(array('prefix' => 'v1'), function()
   	    // Route::resource('passenger','PassengerController');
   	});
 
+    Route::get('customer/list', 'CustomerController@getCustomer');
+
     Route::get('product/list/event/new', 'ProductController@getListEventNew');
     Route::get('product/list', 'ProductController@getList');
     Route::get('product/detail', 'ProductController@getDetail');
@@ -43,8 +45,9 @@ Route::group(array('prefix' => 'v1'), function()
 
     Route::get('config/category/get', 'ConfigController@getCategory');
     Route::get('config/color/get', 'ConfigController@getColor');
-    Route::get('config/gender/get', 'ConfigController@getGender');
     Route::get('config/size/get', 'ConfigController@getSize');
+    Route::get('config/gender/get', 'ConfigController@getGender');
+    Route::get('config/discount-type/get', 'ConfigController@getDiscount');
     Route::get('config/province/get', 'ConfigController@getProvince');
     Route::get('config/city/get', 'ConfigController@getCity');
     Route::get('config/district/get', 'ConfigController@getDistrict');

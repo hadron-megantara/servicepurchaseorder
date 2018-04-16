@@ -135,13 +135,15 @@ class ProductController extends Controller
     }
 
     public function getDetailPhoto(Request $request){
-        $productPhotoData = DB::select('call GET_PRODUCT_DETAIL_PHOTO(?, ?)',[$request->owner, $request->productId]);
+        if($request->has('owner') && $request->has('productId')){
+            $productPhotoData = DB::select('call GET_PRODUCT_DETAIL_PHOTO(?, ?)',[$request->owner, $request->productId]);
 
-        for($i=0;$i < count($productPhotoData);$i++){
-            $productPhotoData[$i]->Photo = url('/').'/app/images/'.$productPhotoData[$i]->Photo;
+            for($i=0;$i < count($productPhotoData);$i++){
+                $productPhotoData[$i]->Photo = url('/').'/app/images/'.$productPhotoData[$i]->Photo;
+            }
+
+            return response()->json(['isError' => false, 'isMessage' => 'Pengambilan Detail Produk Berhasil', 'isResponse' => ['data' => ['detail' => $productPhotoData]]]);
         }
-
-        return response()->json(['isError' => false, 'isMessage' => 'Pengambilan Detail Produk Berhasil', 'isResponse' => ['data' => ['detail' => $productPhotoData]]]);
     }
 
     public function getDetailStock(Request $request){

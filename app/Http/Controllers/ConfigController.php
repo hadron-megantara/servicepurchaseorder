@@ -10,6 +10,7 @@ use App\Size;
 use App\Province;
 use App\City;
 use App\District;
+use App\DiscountType;
 
 class ConfigController extends Controller
 {
@@ -35,6 +36,12 @@ class ConfigController extends Controller
         $size = Size::all();
 
         return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $size]]);
+    }
+
+    public function getDiscount(Request $request){
+        $discountType = DiscountType::all();
+
+        return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $discountType]]);
     }
 
     public function getProvince(Request $request){
