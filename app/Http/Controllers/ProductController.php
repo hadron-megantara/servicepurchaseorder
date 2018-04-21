@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use App\Owner;
+use App\Product;
+use App\Discount;
 use App\Category;
 use App\Color;
 use App\Gender;
@@ -166,5 +171,78 @@ class ProductController extends Controller
         $photo = DB::select('call GET_PRODUCT_DETAIL_PHOTO_COLOR(?, ?, ?)',[$request->owner, $request->productId, $request->color]);
 
         return response()->json(['isError' => false, 'isMessage' => '', 'isResponse' => ['data' => $photo]]);
+    }
+
+    public function addProduct(Request $request){
+        if($request->has('owner') && $request->has('productName') && $request->has('productCategory') && $request->has('productGender') && $request->has('productPrice')
+            && $request->has('productDescription')){
+
+            $uuid = $this->attributes['uuid'] = Uuid::uuid4()->toString();
+
+            $product = new Product;
+            $product->_Owner = $request->owner;
+            $product->Name = $request->productName;
+            $product->Description = $request->productDescription;
+            $product->_Gender = $request->productGender;
+            $product->_Category = $request->productCategory;
+            $product->Price = $request->productPrice;
+            $product->Status = 1;
+            $product->Uuid = $uuid;
+            $product->CreatedDt = Carbon::now()->toDateTimeString();
+            $product->CreatedBy = $request->adminId;
+            $product->UpdatedDt = Carbon::now()->toDateTimeString();
+            $product->UpdatedBy = $request->adminId;
+            $product->save();
+
+            $productId = $product->id;
+
+            if($request->has('productIsDiscount') && $request->productIsDiscount != '' && $request->productIsDiscount != null && $request->productIsDiscount != 0){
+                $discount = new Discount;
+                $discount->_Product = $productId;
+                $discount->StartDt = $request->producDiscountStartDt;
+
+                if($request->has('producDiscountEndDt') && $request->producDiscountEndDt != null){
+                    $discount->EndDt = $request->producDiscountEndDt;
+                } else{
+                    $discount->EndDt = null;
+                }
+
+                $discount->_DiscountType = $request->productDiscountType;
+                $discount->Value = $request->productDiscountVal;
+                $discount->CreatedDt = Carbon::now()->toDateTimeString();
+                $discount->CreatedBy = $request->adminId;
+                $discount->UpdatedDt = Carbon::now()->toDateTimeString();
+                $discount->UpdatedBy = $request->adminId;
+                $discount->save();
+            }
+
+            return response()->json(['isError' => false, 'isMessage' => 'Menambah Produk Berhasil', 'isResponse' => ['data' => $product]]);
+        }
+    }
+
+    public function addImageProduct(Request $request){
+        if($request->has('owner') && $request->has('productId') && $request->has('productUuid') && $request->has('colorId') && $request->has('selected') && $request->has('adminId') && $request->has('file')){
+            $owner = Owner::find($request->owner);
+
+            $currDate = Carbon::now()->toDateTimeString();
+            $fileName = pathinfo($request->file->getClientOriginalName(), PATHINFO_FILENAME).'-'.$currDate.'.'.$request->file->getClientOriginalExtension();
+            $uploadedFile = $request->file('file');
+            $uploadedFile = $uploadedFile->storeAs('images/'.$owner->Uuid.'/'.$request->productUuid, $fileName);
+
+            $gallery = new Gallery;
+            $gallery->_Product = $request->productId;
+            $gallery->_Color = $request->colorId;
+            $gallery->Path = $fileName;
+            $gallery->Selected = $request->selected;
+            $gallery->CreatedDt = $currDate;
+            $gallery->CreatedBy = $request->adminId;
+            $gallery->UpdatedDt = $currDate;
+            $gallery->UpdatedBy = $request->adminId;
+            $gallery->save();
+
+            return response()->json(['isError' => false, 'isMessage' => 'Upload Foto Berhasil', 'isResponse' => null]);
+        } else{
+            return response()->json(['isError' => true, 'isMessage' => 'Upload Foto Gagal', 'isResponse' => null]);
+        }
     }
 }

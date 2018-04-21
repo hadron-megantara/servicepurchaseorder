@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Gallery extends Model
+class Owner extends Model
 {
-    protected $table = 'Gallery';
+    protected $table = 'Owner';
 
     public $timestamps = false;
 }

@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Gallery extends Model
+class Discount extends Model
 {
-    protected $table = 'Gallery';
+    protected $table = 'Discount';
 
     public $timestamps = false;
 }

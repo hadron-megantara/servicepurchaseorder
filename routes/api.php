@@ -40,11 +40,21 @@ Route::group(array('prefix' => 'v1'), function()
     Route::get('product/detail/stock', 'ProductController@getDetailStock');
     Route::get('product/detail/list', 'ProductController@getDetailList');
     Route::get('product/detail/photo-by-color', 'ProductController@getPhotoByProducColor');
+    Route::post('product/add', 'ProductController@addProduct');
+    Route::post('product/image/add', 'ProductController@addImageProduct');
 
     Route::post('order/add', 'OrderController@create');
 
     Route::get('config/category/get', 'ConfigController@getCategory');
+    Route::post('config/category/add', 'ConfigController@addCategory');
+    Route::post('config/category/edit', 'ConfigController@editCategory');
+    Route::post('config/category/delete', 'ConfigController@deleteCategory');
+
     Route::get('config/color/get', 'ConfigController@getColor');
+    Route::post('config/color/add', 'ConfigController@addColor');
+    Route::post('config/color/edit', 'ConfigController@editColor');
+    Route::post('config/color/delete', 'ConfigController@deleteColor');
+
     Route::get('config/size/get', 'ConfigController@getSize');
     Route::get('config/gender/get', 'ConfigController@getGender');
     Route::get('config/discount-type/get', 'ConfigController@getDiscount');
