@@ -27,7 +27,7 @@ class ProductController extends Controller
         }
 
         $name = '';
-        if($request->has('name')  && $request->name != ''){
+        if($request->has('name')  && $request->name != '' && $request->name != null){
             $name = $request->name;
         }
 
