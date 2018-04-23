@@ -45,6 +45,12 @@ Route::group(array('prefix' => 'v1'), function()
 
     Route::post('order/add', 'OrderController@create');
 
+    Route::get('config/bank-list/get', 'ConfigController@getBankList');
+    Route::get('config/bank-account/get', 'ConfigController@getBankAccount');
+    Route::post('config/bank-account/add', 'ConfigController@addBankAccount');
+    Route::post('config/bank-account/edit', 'ConfigController@editBankAccount');
+    Route::post('config/bank-account/delete', 'ConfigController@deleteBankAccount');
+
     Route::get('config/category/get', 'ConfigController@getCategory');
     Route::post('config/category/add', 'ConfigController@addCategory');
     Route::post('config/category/edit', 'ConfigController@editCategory');

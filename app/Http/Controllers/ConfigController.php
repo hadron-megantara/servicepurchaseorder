@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 use App\Category;
 use App\Color;
 use App\Gender;
@@ -11,7 +15,8 @@ use App\Province;
 use App\City;
 use App\District;
 use App\DiscountType;
-use Carbon\Carbon;
+use App\Bank;
+use App\BankAccount;
 
 class ConfigController extends Controller
 {
@@ -136,5 +141,64 @@ class ConfigController extends Controller
         }
 
         return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $district]]);
+    }
+
+    public function getBankList(Request $request){
+        $bankList = Bank::all();
+
+        return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $bankList]]);
+    }
+
+    public function getBankAccount(Request $request){
+        if($request->has('owner')){
+            $bankAccount = DB::select('call GET_BANK_ACCOUNT(?)',[$request->owner]);
+
+            $bankAccountResponse = array();
+            if(count($bankAccount) > 0){
+                foreach($bankAccount as $bankAccount){
+                    $bankAccount->BankPath = url('/').'/img/logo/bank/'.$bankAccount->BankPath;
+                    $bankAccountResponse[] = $bankAccount;
+                }
+            }
+
+            return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => $bankAccountResponse]]);
+        }
+    }
+
+    public function addBankAccount(Request $request){
+        if($request->has('owner') && $request->has('adminId') && $request->has('accountName') && $request->has('accountNumber') && $request->has('bankId') && $request->has('accountBranch')){
+            $dt = Carbon::now('Asia/Jakarta');
+
+            $bankAccount = new BankAccount;
+            $bankAccount->_Owner = $request->owner;
+            $bankAccount->_Bank = $request->bankId;
+            $bankAccount->AccountName = $request->accountName;
+            $bankAccount->AccountNumber = $request->accountNumber;
+            $bankAccount->Branch = ucfirst($request->accountBranch);
+            $bankAccount->CreatedDt = $dt->toDateTimeString();
+            $bankAccount->CreatedBy = $request->adminId;
+            $bankAccount->UpdatedDt = $dt->toDateTimeString();
+            $bankAccount->UpdatedBy = $request->adminId;
+            $bankAccount->save();
+
+            return response()->json(['isError' => false, 'message' => 'Sukses Menambah Akun Bank', 'isResponse' => ['data' => $bankAccount]]);
+        }
+    }
+
+    public function editBankAccount(Request $request){
+        if($request->has('owner') && $request->has('categoryId') && $request->has('category')){
+            $dt = Carbon::now('Asia/Jakarta');
+
+            $category = Category::where('Id', $request->categoryId)->where('_Owner', $request->owner)->update(['Name' => ucfirst($request->category), 'UpdatedDt' => $dt->toDateTimeString()]);
+            return response()->json(['isError' => false, 'message' => 'Sukses Mengubah Kategori', 'isResponse' => null]);
+        }
+    }
+
+    public function deleteBankAccount(Request $request){
+        if($request->has('owner') && $request->has('categoryId')){
+            $category = Category::where('Id', $request->categoryId)->where('_Owner', $request->owner)->delete();
+
+            return response()->json(['isError' => false, 'message' => 'Sukses Menghapus Kategori', 'isResponse' => null]);
+        }
     }
 }
