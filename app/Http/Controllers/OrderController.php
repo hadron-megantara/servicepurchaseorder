@@ -13,8 +13,8 @@ class OrderController extends Controller
 {
     public function create(Request $request){
         if($request->has('owner') && $request->has('account') && $request->has('fullname') && $request->has('province') && $request->has('city') && $request->has('district') && $request->has('address') && $request->has('phone') && $request->has('productList')){
-            $length = 4;
-            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $length = 6;
+            $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $charactersLength = strlen($characters);
             $randomString = '';
             for ($i = 0; $i < $length; $i++) {
@@ -22,6 +22,15 @@ class OrderController extends Controller
             }
 
             $orderCode = $request->owner.$randomString.date('Ymd');
+
+            $length = 3;
+            $characters = '0123456789';
+            $charactersLength = strlen($characters);
+            $randomString = '';
+            for ($i = 0; $i < $length; $i++) {
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+            }
+            $transactionCode = $randomString;
 
             $purchaseOrder = new PurchaseOrder;
             $purchaseOrder->OrderCode = $orderCode;
@@ -83,12 +92,13 @@ class OrderController extends Controller
             }
 
             $purchaseOrder->Price = $totalPrice;
-            $purchaseOrder->FinalPrice = $totalPrice;
+            $purchaseOrder->TransactionCode = $transactionCode;
+            $purchaseOrder->FinalPrice = $totalPrice + (int) $transactionCode;
             $purchaseOrder->save();
 
             foreach($productDataWillSave as $productDataWillSave){
                 $purchaseOrderDetail = new PurchaseOrderDetail;
-                $purchaseOrderDetail->_PurchaseOrder = $purchaseOrder->id;
+                $purchaseOrderDetail->_PurchaseOrder = $orderCode;
                 $purchaseOrderDetail->_Product = $productDataWillSave['id'];
                 $purchaseOrderDetail->_Color = $productDataWillSave['color'];
                 $purchaseOrderDetail->_Size = $productDataWillSave['size'];
@@ -105,7 +115,81 @@ class OrderController extends Controller
                 $purchaseOrderDetail->save();
             }
 
-            return response()->json(['isError' => false, 'message' => '', 'isResponse' => ['data' => 'Purchase Order Success']]);
+            return response()->json(['isError' => false, 'message' => 'Order Anda Telah Berhasil Disimpan', 'isResponse' => ['data' => ['orderCode' => $orderCode]]]);
+        }
+    }
+
+    public function getOrder(Request $request){
+        if($request->has('orderCode')){
+            $orderData = DB::select('call GET_ORDER_DETAIL(?)',[$request->orderCode]);
+
+            $orderDataOrderCode = null;
+            $orderDataUserId = null;
+            $orderDataFullname = null;
+            $orderDataProvinceId = null;
+            $orderDataProvinceName = null;
+            $orderDataCityId = null;
+            $orderDataCityName = null;
+            $orderDataDistrictId = null;
+            $orderDataDistrictName = null;
+            $orderDataAddress = null;
+            $orderDataPostCode = null;
+            $orderDataPhone = null;
+            $orderDataTransactionCode = null;
+            $orderDataPrice = null;
+            $orderDataFinalPrice = null;
+            $orderDataFinalStatus = null;
+            $orderDetail = array();
+
+            foreach($orderData as $orderDetailData){
+                $orderDetail[] = array(
+                    'productName' => $orderDetailData->ProductName,
+                    'productColor' => $orderDetailData->ProductColor,
+                    'productSize' => $orderDetailData->ProductSize,
+                    'productTotal' => $orderDetailData->ProductTotal,
+                    'productPrice' => $orderDetailData->ProductPrice,
+                    'productTotalPrice' => $orderDetailData->ProductTotalPrice,
+                    'productPhoto' => $orderDetailData->ProductPhoto,
+                );
+
+                $orderDataOrderCode = $orderDetailData->OrderCode;
+                $orderDataUserId = $orderDetailData->UserId;
+                $orderDataFullname = $orderDetailData->Fullname;
+                $orderDataProvinceId = $orderDetailData->ProvinceId;
+                $orderDataProvinceName = $orderDetailData->ProvinceName;
+                $orderDataCityId = $orderDetailData->CityId;
+                $orderDataCityName = $orderDetailData->CityName;
+                $orderDataDistrictId = $orderDetailData->DistrictId;
+                $orderDataDistrictName = $orderDetailData->DistrictName;
+                $orderDataAddress = $orderDetailData->Address;
+                $orderDataPostCode = $orderDetailData->PostCode;
+                $orderDataPhone = $orderDetailData->Phone;
+                $orderDataTransactionCode = $orderDetailData->TransactionCode;
+                $orderDataPrice = $orderDetailData->Price;
+                $orderDataFinalPrice = $orderDetailData->FinalPrice;
+                $orderDataFinalStatus = $orderDetailData->Status;
+            }
+
+            return response()->json(['isError' => false, 'message' => 'Berhasil Mendapatkan Detail Order',
+                    'isResponse' => ['data' => [
+                            'orderCode' => $orderDataOrderCode,
+                            'userId' => $orderDataUserId,
+                            'fullname' => $orderDataFullname,
+                            'provinceId' => $orderDataProvinceId,
+                            'provinceName' => $orderDataProvinceName,
+                            'cityId' => $orderDataCityId,
+                            'cityName' => $orderDataCityName,
+                            'districtId' => $orderDataDistrictId,
+                            'districtName' => $orderDataDistrictName,
+                            'address' => $orderDataAddress,
+                            'postCode' => $orderDataPostCode,
+                            'phone' => $orderDataPhone,
+                            'transactionCode' => $orderDataTransactionCode,
+                            'price' => $orderDataPrice,
+                            'finalPrice' => $orderDataFinalPrice,
+                            'status' => $orderDataFinalStatus,
+                            'products' => $orderDetail
+                    ]]]);
         }
     }
 }

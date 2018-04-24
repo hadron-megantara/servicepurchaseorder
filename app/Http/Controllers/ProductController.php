@@ -136,8 +136,19 @@ class ProductController extends Controller
     public function getDetail(Request $request){
         $productDetailData = DB::select('call GET_PRODUCT_DETAIL(?, ?)',[$request->owner, $request->productId]);
 
+        $color = "";
         foreach($productDetailData as $productDetailData2){
             $productStock = DB::select('call GET_PRODUCT_DETAIL_STOCK(?, ?)',[$request->owner, $productDetailData2->Id]);
+            foreach($productStock as $productStock){
+                if($color != ''){
+                    $color = $color.',';
+                }
+
+                $color = $color.$productStock->ColorId.'-'.$productStock->ColorName;
+            }
+
+            $productDetailData2->color = $color;
+
             $productPhotoData = DB::select('call GET_PRODUCT_DETAIL_PHOTO(?, ?)',[$request->owner, $productDetailData2->Id]);
 
             for($i=0;$i < count($productPhotoData);$i++){

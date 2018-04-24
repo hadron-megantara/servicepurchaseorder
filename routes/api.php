@@ -44,6 +44,7 @@ Route::group(array('prefix' => 'v1'), function()
     Route::post('product/image/add', 'ProductController@addImageProduct');
 
     Route::post('order/add', 'OrderController@create');
+    Route::get('order/get', 'OrderController@getOrder');
 
     Route::get('config/bank-list/get', 'ConfigController@getBankList');
     Route::get('config/bank-account/get', 'ConfigController@getBankAccount');
