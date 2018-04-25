@@ -167,7 +167,8 @@ class OrderController extends Controller
                 $orderDataTransactionCode = $orderDetailData->TransactionCode;
                 $orderDataPrice = $orderDetailData->Price;
                 $orderDataFinalPrice = $orderDetailData->FinalPrice;
-                $orderDataFinalStatus = $orderDetailData->Status;
+                $orderDataStatus = $orderDetailData->Status;
+                $orderDataExpiredDt = $orderDetailData->ExpiredDt;
             }
 
             return response()->json(['isError' => false, 'message' => 'Berhasil Mendapatkan Detail Order',
@@ -187,7 +188,8 @@ class OrderController extends Controller
                             'transactionCode' => $orderDataTransactionCode,
                             'price' => $orderDataPrice,
                             'finalPrice' => $orderDataFinalPrice,
-                            'status' => $orderDataFinalStatus,
+                            'status' => $orderDataStatus,
+                            'expiredDt' => $orderDataExpiredDt,
                             'products' => $orderDetail
                     ]]]);
         }

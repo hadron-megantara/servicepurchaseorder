@@ -136,18 +136,54 @@ class ProductController extends Controller
     public function getDetail(Request $request){
         $productDetailData = DB::select('call GET_PRODUCT_DETAIL(?, ?)',[$request->owner, $request->productId]);
 
-        $color = "";
+        $colorId = "";
+        $colorName = '';
+        $sizeId = "";
+        $sizeName = '';
+        $stock= '';
+        $stockTotal = 0;
+
         foreach($productDetailData as $productDetailData2){
             $productStock = DB::select('call GET_PRODUCT_DETAIL_STOCK(?, ?)',[$request->owner, $productDetailData2->Id]);
-            foreach($productStock as $productStock){
-                if($color != ''){
-                    $color = $color.',';
+            foreach($productStock as $productStock2){
+                if($colorId != ''){
+                    $colorId = $colorId.',';
                 }
 
-                $color = $color.$productStock->ColorId.'-'.$productStock->ColorName;
+                if($colorName != ''){
+                    $colorName = $colorName.',';
+                }
+
+                if($sizeId != ''){
+                    $sizeId = $sizeId.',';
+                }
+
+                if($sizeName != ''){
+                    $sizeName = $sizeName.',';
+                }
+
+                if($stock != ''){
+                    $stock = $stock.',';
+                }
+
+                $colorId = $colorId.$productStock2->ColorId;
+                $colorName = $colorName.$productStock2->ColorName;
+                $sizeId = $sizeId.$productStock2->SizeId;
+                $sizeName = $sizeName.$productStock2->SizeName;
+                $stock = $stock.$productStock2->Total;
+                $stockTotal = $stockTotal + $productStock2->Total;
             }
 
-            $productDetailData2->color = $color;
+            $date = explode('-', substr($productDetailData2->CreatedDt, 0,10));
+            Carbon::setLocale('Asia/Jakarta');
+            $date = Carbon::create($date[0], $date[1], $date[2]);
+            $productDetailData2->CreatedDt = $date->formatLocalized('%d %b %Y');;
+            $productDetailData2->colorId = $colorId;
+            $productDetailData2->colorName = $colorName;
+            $productDetailData2->sizeId = $sizeId;
+            $productDetailData2->sizeName = $sizeName;
+            $productDetailData2->stock = $stock;
+            $productDetailData2->stockTotal = $stockTotal;
 
             $productPhotoData = DB::select('call GET_PRODUCT_DETAIL_PHOTO(?, ?)',[$request->owner, $productDetailData2->Id]);
 
