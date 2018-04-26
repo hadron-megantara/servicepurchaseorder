@@ -77,6 +77,58 @@ class ProductController extends Controller
         return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
     }
 
+    public function getListAdmin(Request $request){
+        $owner = 0;
+        if($request->has('owner') && $request->owner != ''){
+            $owner = $request->owner;
+        }
+
+        $name = '';
+        if($request->has('name')  && $request->name != '' && $request->name != null){
+            $name = $request->name;
+        }
+
+        $category = 0;
+        if($request->has('category') && $request->category != ''){
+            $category = $request->category;
+        }
+
+        $gender = 0;
+        if($request->has('gender') && $request->gender != ''){
+            $gender = $request->gender;
+        }
+
+        $priceBot = 0;
+        $priceTop = 0;
+        if($request->has('priceBot') && $request->priceBot != '' && $request->has('priceTop') && $request->priceTop != ''){
+            $priceBot = $request->priceBot;
+            $priceTop = $request->priceTop;
+        }
+
+        $limit = env('PRODUCT_LIST_LIMIT', 15);
+        $limitStart = 0;
+        if($request->has('limit') && $request->limit != ''){
+            $limit = $request->limit;
+        }
+
+        if($request->has('limitStart') && $request->limitStart != ''){
+            $limitStart = $request->limitStart;
+        }
+
+        $orderBy = 0;
+        if($request->has('orderBy')){
+            $orderBy = $request->orderBy;
+        }
+
+        $productListData = DB::select('call GET_PRODUCT_LIST(?, ?, ?, ?, ?, ?, ?, ?, ?)',[$owner, $name, $category, $gender, $priceBot, $priceTop, $limit, $limitStart, $orderBy]);
+
+        for($i=0;$i < count($productListData);$i++){
+            $productListData[$i]->Photo = url('/').'/app/images/'.$productListData[$i]->Photo;
+        }
+
+        return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Produk Berhasil', 'isResponse' => ['data' => ['product' => $productListData, 'total' => count($productListData)]]]);
+    }
+
     public function getListEventNew(Request $request){
         $owner = 0;
         if($request->has('owner') && $request->owner != ''){
@@ -177,7 +229,7 @@ class ProductController extends Controller
             $date = explode('-', substr($productDetailData2->CreatedDt, 0,10));
             Carbon::setLocale('Asia/Jakarta');
             $date = Carbon::create($date[0], $date[1], $date[2]);
-            $productDetailData2->CreatedDt = $date->formatLocalized('%d %b %Y');;
+            $productDetailData2->CreatedDt = $date->formatLocalized('%d %b %Y');
             $productDetailData2->colorId = $colorId;
             $productDetailData2->colorName = $colorName;
             $productDetailData2->sizeId = $sizeId;
@@ -299,6 +351,54 @@ class ProductController extends Controller
             return response()->json(['isError' => false, 'isMessage' => 'Upload Foto Berhasil', 'isResponse' => null]);
         } else{
             return response()->json(['isError' => true, 'isMessage' => 'Upload Foto Gagal', 'isResponse' => null]);
+        }
+    }
+
+    public function getProductStock(Request $request){
+        if($request->has('owner')){
+            $orderBy = 0;
+            if($request->has('orderBy')){
+                $orderBy = $request->orderBy;
+            }
+
+            $limit = 0;
+            if($request->has('limit')){
+                $limit = $request->limit;
+            }
+
+            $limitStart = 0;
+            if($request->has('limitStart')){
+                $limitStart = $request->limitStart;
+            }
+
+            $productStock = DB::select('call GET_STOCK(?, ?, ?, ?)',[$request->owner, $orderBy, $limit, $limitStart]);
+
+            return response()->json(['isError' => false, 'isMessage' => 'Pengambilan Detail Produk Berhasil', 'isResponse' => ['data' => ['stock' => $productStock]]]);
+        }
+    }
+
+    public function getProductName(Request $request){
+        if($request->has('owner')){
+            $product = Product::where('_Owner', $request->owner)->orderBy('UpdatedDt', 'DESC')->get();
+
+            return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Nama Produk Berhasil', 'isResponse' => ['data' => ['product' => $product]]]);
+        }
+    }
+
+    public function addProductStock(Request $request){
+        if($request->has('owner')){
+            $stock = new Stock;
+            $stock->_Product = $request->productId;
+            $stock->_Color = $request->color;
+            $stock->_Size = $request->size;
+            $stock->Total = $request->total;
+            $stock->CreatedDt = Carbon::now()->toDateTimeString();
+            $stock->CreatedBy = $request->adminId;
+            $stock->UpdatedDt = Carbon::now()->toDateTimeString();
+            $stock->UpdatedBy = $request->adminId;
+            $stock->save();
+
+            return response()->json(['isError' => false, 'isMessage' => 'Berhasil Menambah Stok', 'isResponse' => ['data' => ['stock' => $stock]]]);
         }
     }
 }

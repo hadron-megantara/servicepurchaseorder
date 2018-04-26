@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Stock extends Model
+class Address extends Model
 {
-    protected $table = 'Stock';
+    protected $table = 'Address';
 
     public $timestamps = false;
 

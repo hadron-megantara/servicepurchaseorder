@@ -194,4 +194,59 @@ class OrderController extends Controller
                     ]]]);
         }
     }
+
+    public function getOrderList(Request $request){
+        if($request->has('owner')){
+            $orderBy = 0;
+            if($request->has('orderBy')){
+                $orderBy = $request->orderBy;
+            }
+
+            $search = "";
+            if($request->has('search')){
+                $search = $request->search;
+            }
+
+            $status = 0;
+            if($request->has('status') && $request->status != ''){
+                $status = $request->status;
+            }
+
+            $orderList = DB::select('call GET_ORDER_LIST(?, ?, ?, ?)',[$request->owner, $orderBy, $search, $status]);
+
+            foreach($orderList as $orderList2){
+                $date = explode('-', substr($orderList2->CreatedDt, 0,10));
+                $date2 = substr($orderList2->CreatedDt, 11);
+
+                Carbon::setLocale('Asia/Jakarta');
+                $date = Carbon::create($date[0], $date[1], $date[2]);
+                $orderList2->CreatedDt = $date->formatLocalized('%d %b %Y').' '.$date2;
+            }
+
+            return response()->json(['isError' => false, 'isMessage' => 'Pengambilan List Pemesanan Berhasil', 'isResponse' => ['data' => $orderList]]);
+        }
+    }
+
+    public function updateOrder(Request $request){
+        if($request->has('orderCode') && $request->has('status')){
+            $order = PurchaseOrder::find($request->orderCode);
+            $order->status = $request->status;
+            $order->save();
+
+            if($request->status == 1){
+                $message = "Berhasil Menandai Pesanan Telah Dibayar";
+            } else if($request->status == 2){
+                $message = "Berhasil Menandai Pesanan Telah Diproses";
+            } else if($request->status == 3){
+                $message = "Berhasil Menandai Pesanan Telah Dikirim";
+            } else if($request->status == 4){
+                $message = "Berhasil Menandai Pesanan Telah Sampai";
+            } else{
+                $message = '';
+            }
+
+            return response()->json(['isError' => false, 'isMessage' => $message, 'isResponse' => ['data' => $order]]);
+            dd($order);
+        }
+    }
 }

@@ -9,4 +9,6 @@ class Owner extends Model
     protected $table = 'Owner';
 
     public $timestamps = false;
+
+    protected $primaryKey = "Id";
 }

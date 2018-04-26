@@ -44,6 +44,10 @@ class Kernel extends HttpKernel
             'bindings',
             \Barryvdh\Cors\HandleCors::class,
         ],
+
+        'validatetoken' => [
+            \App\Http\Middleware\ValidateToken::class
+        ],
     ];
 
     /**

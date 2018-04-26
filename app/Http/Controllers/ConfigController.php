@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Owner;
 use App\Category;
 use App\Color;
 use App\Gender;
@@ -199,6 +200,40 @@ class ConfigController extends Controller
             $category = Category::where('Id', $request->categoryId)->where('_Owner', $request->owner)->delete();
 
             return response()->json(['isError' => false, 'message' => 'Sukses Menghapus Kategori', 'isResponse' => null]);
+        }
+    }
+
+    public function getOwner(Request $request){
+        if($request->has('owner')){
+            $owner = Owner::find($request->owner);
+
+            $owner->Logo = url('/').'/app/images/'.$owner->Uuid.'/logo/'.$owner->Logo;
+
+            return response()->json(['isError' => false, 'message' => 'Berhasil Mendapatkan Detail Owner', 'isResponse' => ['data' => $owner]]);
+        }
+    }
+
+    public function editOwner(Request $request){
+        if($request->has('owner')){
+            $owner = Owner::where('Id', $request->owner)->firstOrFail();
+            $owner->Name = $request->name;
+            $owner->Phone = $request->phone;
+            $owner->Address = $request->address;
+
+            if($request->has('file')){
+                $currDate = Carbon::now()->toDateTimeString();
+                $fileName = pathinfo($request->file->getClientOriginalName(), PATHINFO_FILENAME).'-'.$currDate.'.'.$request->file->getClientOriginalExtension();
+                $uploadedFile = $request->file('file');
+                $uploadedFile = $uploadedFile->storeAs('images/'.$owner->Uuid.'/logo', $fileName);
+
+                $owner->Logo = $fileName;
+            }
+
+            $owner->save();
+
+            $owner = Owner::find($request->owner);
+
+            return response()->json(['isError' => false, 'message' => 'Berhasil Mengubah Info', 'isResponse' => ['data' => $owner]]);
         }
     }
 }

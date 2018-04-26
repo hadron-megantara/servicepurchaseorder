@@ -29,4 +29,6 @@ class Account extends Authenticatable implements JWTSubject
         return [];
     }
 
+    protected $primaryKey = "Id";
+
 }

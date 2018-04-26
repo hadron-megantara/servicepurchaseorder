@@ -35,6 +35,7 @@ Route::group(array('prefix' => 'v1', 'middleware' => ['api']), function()
 
     Route::get('product/list/event/new', 'ProductController@getListEventNew');
     Route::get('product/list', 'ProductController@getList');
+    Route::get('product/list/admin', 'ProductController@getListAdmin');
     Route::get('product/detail', 'ProductController@getDetail');
     Route::get('product/detail/photo', 'ProductController@getDetailPhoto');
     Route::get('product/detail/stock', 'ProductController@getDetailStock');
@@ -42,9 +43,17 @@ Route::group(array('prefix' => 'v1', 'middleware' => ['api']), function()
     Route::get('product/detail/photo-by-color', 'ProductController@getPhotoByProducColor');
     Route::post('product/add', 'ProductController@addProduct');
     Route::post('product/image/add', 'ProductController@addImageProduct');
+    Route::get('product/stock', 'ProductController@getProductStock');
+    Route::get('product/stock/add', 'ProductController@addProductStock');
+    Route::get('product/name', 'ProductController@getProductName');
 
+    Route::get('order/list/get', 'OrderController@getOrderList');
     Route::post('order/add', 'OrderController@create');
     Route::get('order/get', 'OrderController@getOrder');
+    Route::post('order/update', 'OrderController@updateOrder');
+
+    Route::get('config/owner/get', 'ConfigController@getOwner');
+    Route::post('config/owner/edit', 'ConfigController@editOwner');
 
     Route::get('config/bank-list/get', 'ConfigController@getBankList');
     Route::get('config/bank-account/get', 'ConfigController@getBankAccount');
@@ -68,4 +77,9 @@ Route::group(array('prefix' => 'v1', 'middleware' => ['api']), function()
     Route::get('config/province/get', 'ConfigController@getProvince');
     Route::get('config/city/get', 'ConfigController@getCity');
     Route::get('config/district/get', 'ConfigController@getDistrict');
+
+    Route::group(['middleware' => 'validatetoken'], function () {
+        Route::get('profile/get', 'ProfileController@getProfile');
+        Route::post('profile/address/add', 'ProfileController@addAddress');
+    });
 });
