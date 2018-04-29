@@ -49,6 +49,10 @@ class OrderController extends Controller
             $purchaseOrder->Status = 0;
             $purchaseOrder->CreatedDt = Carbon::now()->toDateTimeString();
 
+            $expiredDt = Carbon::now('Asia/Jakarta')->addDays(1);
+            $expiredDt = $expiredDt->toDateTimeString();
+            $purchaseOrder->ExpiredDt = $expiredDt;
+
             $productList = $request->productList;
             $productList = explode(',', $productList);
             $productIdList = "";
@@ -207,12 +211,17 @@ class OrderController extends Controller
                 $search = $request->search;
             }
 
-            $status = 0;
+            $status = 6;
             if($request->has('status') && $request->status != ''){
                 $status = $request->status;
             }
 
-            $orderList = DB::select('call GET_ORDER_LIST(?, ?, ?, ?)',[$request->owner, $orderBy, $search, $status]);
+            $account = 0;
+            if($request->has('account') && $request->account != ''){
+                $account = $request->account;
+            }
+
+            $orderList = DB::select('call GET_ORDER_LIST(?, ?, ?, ?, ?)',[$request->owner, $orderBy, $search, $status, $account]);
 
             foreach($orderList as $orderList2){
                 $date = explode('-', substr($orderList2->CreatedDt, 0,10));

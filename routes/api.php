@@ -80,6 +80,8 @@ Route::group(array('prefix' => 'v1', 'middleware' => ['api']), function()
 
     Route::group(['middleware' => 'validatetoken'], function () {
         Route::get('profile/get', 'ProfileController@getProfile');
+        Route::get('profile/address/get', 'ProfileController@getAddress');
         Route::post('profile/address/add', 'ProfileController@addAddress');
+        Route::post('profile/address/edit', 'ProfileController@editAddress');
     });
 });

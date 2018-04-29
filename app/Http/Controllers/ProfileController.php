@@ -19,22 +19,54 @@ class ProfileController extends Controller
         return response()->json(['isError' => false, 'message' => 'Berhasil Mendapatkan Data Profile', 'isResponse' => ['data' => $user]]);
     }
 
+    public function getAddress(Request $request){
+        $user = $request->get('user');
+
+        $address = DB::select('call GET_USER_ADDRESS(?)',[$user->Id]);
+
+        $total = count($address);
+
+        return response()->json(['isError' => false, 'isMessage' => 'Berhasil Mendapatkan Daftar Alamat', 'isResponse' => ['data' => $address, 'total' => $total]]);
+    }
+
     public function addAddress(Request $request){
-        if($request->has('userId')){
-            Carbon::setLocale('Asia/Jakarta');
+        $user = $request->get('user');
 
-            $address = new Address;
-            $address->_Account = $request->userId;
-            $address->Name = $request->name;
-            $address->Address = $request->address;
-            $address->_Province = $request->province;
-            $address->_City = $request->city;
-            $address->_District = $request->district;
-            $address->CreatedDt = Carbon::now()->toDateTimeString();
-            $address->UpdatedDt = Carbon::now()->toDateTimeString();
-            $address->save();
+        Carbon::setLocale('Asia/Jakarta');
 
-            eturn response()->json(['isError' => false, 'message' => 'Berhasil Menambah Alamat', 'isResponse' => ['data' => $address]]);
-        }
+        $address = new Address;
+        $address->_Account = $user->Id;
+        $address->RecipientName = ucfirst($request->recipientName);
+        $address->RecipientPhone = $request->recipientPhone;
+        $address->Name = ucfirst($request->name);
+        $address->Address = $request->address;
+        $address->_Province = $request->province;
+        $address->_City = $request->city;
+        $address->_District = $request->district;
+        $address->CreatedDt = Carbon::now()->toDateTimeString();
+        $address->UpdatedDt = Carbon::now()->toDateTimeString();
+        $address->save();
+
+        return response()->json(['isError' => false, 'isMessage' => 'Berhasil Menambah Alamat', 'isResponse' => ['data' => $address]]);
+    }
+
+    public function editAddress(Request $request){
+        $user = $request->get('user');
+
+        Carbon::setLocale('Asia/Jakarta');
+
+        $address = Address::where('Id', $request->id)->where('_Account', $user->Id)->first();
+        $address->RecipientName = ucfirst($request->recipientName);
+        $address->RecipientPhone = $request->recipientPhone;
+        $address->Name = ucfirst($request->name);
+        $address->Address = $request->address;
+        $address->_Province = $request->province;
+        $address->_City = $request->city;
+        $address->_District = $request->district;
+        $address->CreatedDt = Carbon::now()->toDateTimeString();
+        $address->UpdatedDt = Carbon::now()->toDateTimeString();
+        $address->save();
+
+        return response()->json(['isError' => false, 'isMessage' => 'Berhasil Mengubah Alamat', 'isResponse' => ['data' => $address]]);
     }
 }
