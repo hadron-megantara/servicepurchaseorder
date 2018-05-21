@@ -84,4 +84,7 @@ Route::group(array('prefix' => 'v1', 'middleware' => ['api']), function()
         Route::post('profile/address/add', 'ProfileController@addAddress');
         Route::post('profile/address/edit', 'ProfileController@editAddress');
     });
+
+    Route::get('testing', 'TestingController@getOrder');
+    Route::get('testing/status', 'TestingController@getOrderStatus');
 });
